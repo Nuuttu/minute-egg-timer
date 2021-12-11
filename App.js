@@ -1,13 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { TextInput } from 'react-native-web';
+import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
 
 export default function App() {
 
   const now = Date.now()
 
-  const [countdown, setCountdown] = useState(6 * 1000)
+  const [countdown, setCountdown] = useState(6)
   const [cdSecond, setCdSecond] = useState(0)
   const [cdMinute, setCdMinute] = useState(0)
 
@@ -17,7 +16,7 @@ export default function App() {
   const [countup, setCountup] = useState(0)
 
   const [startTime, setStartTime] = useState(Date.now())
-  const [targetTime, setTargetTime] = useState(Date.now() + countdown)
+  const [targetTime, setTargetTime] = useState(Date.now() + (countdown*1000))
 
   var inter = 1000
 
@@ -26,6 +25,7 @@ export default function App() {
 
   const [lastTick, setLastTick] = useState(Date.now())
   const [lastT, setLastT] = useState(Date.now())
+
   
   const checkTime = () => {
     console.log('asd')
@@ -48,41 +48,68 @@ export default function App() {
       JOS date.now() tuhat vaihtuu -> + 1
     */
   const checkAlert = () => {
+    
+    Alert.alert("moop")
+    
   }
 
-  var sc = Math.round(Date.now()/1000) // Toimii ... ... .... ..
-  const timerOut = (delay, lastti, expe) => {
+  var sc = Date.now()
+  var cd = countdown
+  var tar = Date.now() + (cd*1000)
+  var alerted = false
+  var t = null
+  const timerOut = (delay) => {
     var n = Date.now()
-    var expe = n + 1000
-    
-    //console.log('tiemr')
     setSeconds(seconds => seconds + 1)
-    //console.log('dell', delay)
-    //console.log('lastt', lastti)
-    console.log('sc', sc)
-    var dif = Date.now() 
-    var lastti = Date.now()
-    //console.log('time menny', Date.now() - startTime)
-    console.log('now', n)
-    console.log('last', lastti)
-    console.log('roundnow', Math.round(n/1000))
-    console.log('roundlast', Math.round(lastti/1000))
-    if (Math.round(n/1000) == Math.round(lastti/1000)) console.log('OOOOOO')
-    if (sc != Math.round(n/1000)) sc = sc + 1
-    
 
+    if (n >= sc) {
+      sc = sc + 1000  
+      if (n < tar) {
+        setCountdown(countdown => countdown - 1)
+        console.log('ASD')
+      }
+      if ( !alerted && n > tar) {
+        console.log('asdadsd')
+        alerted = true
+      }
+    }
     var dell = delay
-    //console.log('dif', dif)
-    setLastT(lastti)
-    setTimeout(() => {timerOut(dell, lastti, expe)}, dell)
+
+    setCountup(countup => countup + 1)
+    t = setTimeout(() => {timerOut(dell)}, dell)
   }
 
   useEffect(() => { 
-    timerOut(200, lastT)
+    timerOut(100)
   }, [])
 
+  const stopTimer = (e) => {
+    e.preventDefault()
+    clearTimeout(t)
+  }
 
 
+
+  const again = () => {
+    console.log('adagi')
+    
+    alerted = false
+    sc = Math.round(Date.now())
+    cd = cd + 5
+    tar = Date.now() + (cd*1000)
+    setCountdown(cd)
+    timerOut(100)
+  }
+
+  const addTime = () => {
+    clearTimeout(t)
+    console.log('add')
+    tar = tar + 2000
+    cd = cd + 2
+    setCountdown(cd)
+    timerOut(100)
+  }
+/*
 
   const counter = () => {
     const timer = setInterval(() => { 
@@ -118,10 +145,7 @@ export default function App() {
     }, 1000)
     return () => { clearInterval(timer) }
   }, [second])
-
-  const addTime = () => {
-    setCountdown(targetTime + 1000)
-  }
+*/
 
   return (
     <View style={styles.container}>
@@ -130,13 +154,11 @@ export default function App() {
       <Text>{cdMinute}.{cdSecond}</Text>
       <Text>{countup}</Text>
       <Text>TIMEROUT {seconds}</Text>
-      <Button title="Moi" onPress={() => checkTime()}></Button>
-      <TextInput
-        style={styles.input}
-        value="{text}"
-      />
+      <Button title="Again" onPress={() => again()}></Button>
+      
       <Button title="Add time" onPress={() => addTime()}></Button>
       <Text>{lastT}</Text>
+      <Button title="STOP" onPress={(e) => stopTimer(e)}></Button>
       <StatusBar style="auto" />
     </View>
   );
@@ -149,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  input: {
+  inp: {
     height: 40,
     margin: 12,
     borderWidth: 1,
