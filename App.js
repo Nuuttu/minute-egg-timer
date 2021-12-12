@@ -2,6 +2,16 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
 
+var rt = null
+function repeatFunc() {
+  console.log('dees nuts')
+  console.log('rt', rt)
+  rt = setTimeout(repeatFunc, 1000)
+  
+  console.log('rt', rt)
+}
+
+
 export default function App() {
 
   const now = Date.now()
@@ -58,34 +68,68 @@ export default function App() {
   var tar = Date.now() + (cd*1000)
   var alerted = false
   var t = null
+
   const timerOut = (delay) => {
     var n = Date.now()
     setSeconds(seconds => seconds + 1)
 
     if (n >= sc) {
-      sc = sc + 1000  
+      sc = sc + 1000
       if (n < tar) {
         setCountdown(countdown => countdown - 1)
         console.log('ASD')
+        
       }
       if ( !alerted && n > tar) {
         console.log('asdadsd')
+        clearTimeout(t)
         alerted = true
       }
     }
     var dell = delay
 
     setCountup(countup => countup + 1)
+    console.log('t1', t)
     t = setTimeout(() => {timerOut(dell)}, dell)
+    console.log('t2', t)
   }
 
+  var interv = null
+  const intervaller = () => {
+    interv = setInterval(() => {
+      console.log('interv1', interv)
+      var n = Date.now()
+      if (n >= sc) {
+        sc = sc + 1000
+        if (n < tar) {
+          setCountdown(countdown => countdown - 1)
+          console.log('cup')
+          
+        }
+        if ( !alerted && n > tar) {
+          console.log('DONE')
+          clearTimeout(t)
+          alerted = true
+        }
+      }
+    }, 100)
+  }
+
+
   useEffect(() => { 
-    timerOut(100)
+    timerOut(1000)
+    //intervaller()
+    //repeatFunc()
   }, [])
 
   const stopTimer = (e) => {
     e.preventDefault()
+    //clearTimeout(t)
+    interv = null
     clearTimeout(t)
+    clearTimeout(rt)
+    rt = null
+    
   }
 
 
@@ -149,10 +193,10 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>{second}.{minute}</Text>
+      <Text style={styles.clock}>{second}.{minute}</Text>
       <Text>{countdown}</Text>
       <Text>{cdMinute}.{cdSecond}</Text>
-      <Text>{countup}</Text>
+      <Text>countup {countup}</Text>
       <Text>TIMEROUT {seconds}</Text>
       <Button title="Again" onPress={() => again()}></Button>
       
@@ -177,4 +221,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
+  clock: {
+    fontSize: 26
+  }
 });
