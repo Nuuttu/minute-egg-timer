@@ -2,6 +2,9 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
 import { Audio } from 'expo-av';
+import Ticker from './Ticker';
+
+
 
 
 export default function App() {
@@ -52,24 +55,11 @@ export default function App() {
       : undefined;
   }, [sound]);
 
-  const checkTime = () => {
-    console.log('asd')
-    console.log('cd', countup)
-    console.log('date', startTime)
-    console.log('tagetdate', targetTime)
-    console.log('diff', targetTime - startTime)
-
-    console.log('lastTick', lastTick)
-    console.log('last diff', targetTime - lastTick)
-  }
 
   /*
    if date + 1000 * x > date + countup * x
     -> update
-   */
 
-
-  /*  
     JOS date.now() tuhat vaihtuu -> + 1
   */
 
@@ -80,8 +70,8 @@ export default function App() {
   var t = null
   var stop = false
 
-  const timerOut = (delay) => {
-    console.log('stop', stop)
+  var timerOut = (delay) => {
+    ifStop()
     if (!stop) {
       var n = Date.now()
       setSeconds(seconds => seconds + 1)
@@ -91,12 +81,10 @@ export default function App() {
         if (n < tar) {
           cd = cd - 1
           setCountdown(countdown => countdown - 1)
-          console.log('ASD')
-
         }
         if (!alerted && n > tar) {
           playSound()
-          console.log('asdadsd')
+          console.log('00000000000000 done')
           clearTimeout(t)
           alerted = true
         }
@@ -109,25 +97,8 @@ export default function App() {
     }
   }
 
-  var interv = null
-  const intervaller = () => {
-    interv = setInterval(() => {
-      console.log('interv1', interv)
-      var n = Date.now()
-      if (n >= sc) {
-        sc = sc + 1000
-        if (n < tar) {
-          setCountdown(countdown => countdown - 1)
-          console.log('cup')
+  const ifStop = () => {
 
-        }
-        if (!alerted && n > tar) {
-          console.log('DONE')
-          clearTimeout(t)
-          alerted = true
-        }
-      }
-    }, 100)
   }
 
 
@@ -170,7 +141,6 @@ export default function App() {
     tar = tar + 2000
     cd = cd + 2
     setCountdown(cd)
-    timerOut(100)
   }
   /*
   
@@ -222,6 +192,7 @@ export default function App() {
       <Button title="Add time" onPress={() => addTime()}></Button>
       <Button title="STOP" onPress={(e) => stopTimer(e)}></Button>
       <Button title="CONTINUE" onPress={(e) => continueTimer(e)}></Button>
+      <Ticker />
       <StatusBar style="auto" />
     </View>
   );
