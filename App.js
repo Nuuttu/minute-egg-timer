@@ -70,8 +70,7 @@ export default function App() {
   var t = null
   var stop = false
 
-  var timerOut = (delay) => {
-    ifStop()
+  var timerOut = (cc) => {
     if (!stop) {
       var n = Date.now()
       setSeconds(seconds => seconds + 1)
@@ -80,6 +79,7 @@ export default function App() {
         sc = sc + 1000
         if (n < tar) {
           cd = cd - 1
+          cc = cc - 1
           setCountdown(countdown => countdown - 1)
         }
         if (!alerted && n > tar) {
@@ -89,21 +89,25 @@ export default function App() {
           alerted = true
         }
       }
-      var dell = delay
+      
       if (!alerted) {
         setCountup(countup => countup + 1)
-        t = setTimeout(() => { timerOut(dell) }, dell)
+        t = setTimeout(() => { timerOut(cc) }, 100)
       }
     }
   }
 
-  const ifStop = () => {
-
+  const timerDown = (ctup) => {
+    console.log('Timer Down')
+    ctup = ctup + 1
+    setCountup(ctup)
+    console.log('ctup', ctup)
+    t = setTimeout(() => { timerDown(ctup) }, 1000)
   }
 
-
   useEffect(() => {
-    timerOut(100)
+    //timerDown(0)
+    timerOut(countdown)
     //intervaller()
     //repeatFunc()
   }, [])
@@ -142,6 +146,7 @@ export default function App() {
     cd = cd + 2
     setCountdown(cd)
   }
+
   /*
   
     const counter = () => {
@@ -180,8 +185,9 @@ export default function App() {
     }, [second])
   */
 
-  return (
-    <View style={styles.container}>
+
+  const rendershit =
+    <View>
       <Text style={styles.clock}>{second}.{minute}</Text>
       <Text>{countdown}</Text>
       <Text>{cdMinute}.{cdSecond}</Text>
@@ -192,7 +198,16 @@ export default function App() {
       <Button title="Add time" onPress={() => addTime()}></Button>
       <Button title="STOP" onPress={(e) => stopTimer(e)}></Button>
       <Button title="CONTINUE" onPress={(e) => continueTimer(e)}></Button>
-      <Ticker />
+    </View>
+
+
+  return (
+    <View style={styles.container}>
+
+      {rendershit}
+
+      <Ticker countdown={countdown} countup={countup} targetTime={targetTime} />
+
       <StatusBar style="auto" />
     </View>
   );
